@@ -5,7 +5,8 @@
 - [x] VS Code 연동 (Ctrl+Esc가 Windows 시작메뉴랑 충돌 → 재할당으로 해결)
 - [x] /init으로 CLAUDE.md 생성
 - [x] 첫 대화 & diff 수락
-- [] git 커밋 위임
+- [x] git 커밋 위임
+- [x] 공식문서 읽기(Quickstart + CLI 기본 챕터)
 
 ## 실습 프로젝트
 - 레포: https://github.com/xodn0802/spring-petclinic
