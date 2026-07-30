@@ -44,11 +44,19 @@
 - worklog·HANDOFF 날짜 체계를 실제 달력 기준으로 정합화
 - 비상 정보 금고 API 커밋(`b819563`)
 - **우선순위 재조정** — "핵심 기능부터"라는 피드백에 따라 PIN·감사로그 등 부가 보안 계층 대신 **앱 화면 구현**을 다음 착수 대상으로 결정
-- `superpowers:brainstorming` → `writing-plans` 스킬로 앱 화면(로그인 → 그룹 생성/합류) 설계 스펙과 구현 계획을 확정·커밋(`a61d37a`)
+- `superpowers:brainstorming` 스킬로 앱 화면(로그인 → 그룹 생성/합류) 설계 스펙 5개 섹션 전부 승인받아 완료·커밋(`a61d37a`)
+- `superpowers:writing-plans` 스킬로 구현 계획(Task 1~10) 작성 — 서버 소스 재확인 + Expo Router v57 공식 문서·타입 선언 직접 검증(스펙의 `<Redirect>`를 v57 권장 패턴인 `<Stack.Protected guard>`로 교체 결정 포함), 실행 방식은 **Subagent-Driven** 선택 → 계획 문서 커밋(`563081b`)
+- `superpowers:subagent-driven-development`로 SDD 착수 — Task 1(API 클라이언트 `client.ts` + Jest 인프라) 구현·리뷰·커밋(`05f384f`), Task 2(`auth.ts`/`groups.ts` 엔드포인트 함수) 구현(스테이징까지)
 
 📎 상세: [Notion — 3주차 3일차](https://cookie-moonstone-7ce.notion.site/3-3-2026-07-28-3aba44f2e1e381c78e35de1f3c201f30?source=copy_link)
 
+### 4일차 · 2026-07-30
+
+- 백엔드 전용 세션 — PostgreSQL 기동 후 서버 전체 테스트 재검증(**BUILD SUCCESSFUL**, 실패 0건), 이력 조회·되돌리기(revert) 엔드포인트 커밋(`0b00f1d`), ADR 0015 커밋(`9f4b62e`)
+
+📎 상세: [Notion — 3주차 4일차](https://cookie-moonstone-7ce.notion.site/3-4-2026-07-30-3ada44f2e1e38193bd56dfb38d2d9594?source=copy_link)
+
 ## 다음 할 것
 
-- 앱 화면 구현 계획(Task 1~10)을 `subagent-driven-development`로 실행 착수
+- SDD Task 2 리뷰 → 커밋 승인 → Task 3부터 계획 문서 순서대로 Task 10까지 진행(Task 5부터 실기기/에뮬레이터 확인 필요)
 - PIN 설정·검증, vault 토큰, 접근 감사 로그 — 앱 화면 조각 이후 순서 재확인
