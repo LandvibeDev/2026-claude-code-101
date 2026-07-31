@@ -17,6 +17,8 @@
 - [x] 프로젝트 레포 셋업 — 모노레포(`server` Spring Boot + `app` Expo), Flyway 마이그레이션 9테이블
 - [x] 프로젝트용 `CLAUDE.md` 작성
 - [x] 첫 커밋 & 개발 착수 — 가족 그룹 / 구성원 프로필 / 비상 정보 금고 API까지 구현·테스트 완료
+- [x] 클라이언트 화면 1차 완주 — 로그인 → 그룹 목록 → 생성/합류 → 멤버·초대 코드까지 5화면 연결
+- [x] 실기기 검증 결과를 반영해 **클라이언트 플랫폼 결정 재검토** — Expo(네이티브) → 반응형 웹앱 전환 설계·구현 계획 확정
 
 ## 일별 진행 상황
 
@@ -52,11 +54,27 @@
 
 ### 4일차 · 2026-07-30
 
-- 백엔드 전용 세션 — PostgreSQL 기동 후 서버 전체 테스트 재검증(**BUILD SUCCESSFUL**, 실패 0건), 이력 조회·되돌리기(revert) 엔드포인트 커밋(`0b00f1d`), ADR 0015 커밋(`9f4b62e`)
+- 백엔드 전용 세션 — PostgreSQL 기동 후 서버 전체 테스트 재검증(**BUILD SUCCESSFUL**, 실패 0건), 이력 조회·되돌리기(revert) 엔드포인트 + ADR 0015 커밋
+- 검증이 끝난 격리 브랜치 2개를 ADR 0014대로 `main`에 되돌림 — PR #2 `feat/emergency-vault-core`(19파일 1,071줄), PR #4 `feat/emergency-vault-history`(8파일 218줄) 병합
+- **SDD Task 2~8을 하루에 완주** — auth/groups API 함수(`f537181`) → `expo-secure-store` 기반 AuthContext(`fb8f710`) → 공용 컴포넌트 4종(`4a6cc2c`) → `<Stack.Protected>` 인증 배선 + 로그인 화면(`27b0e92`) → 그룹 목록(`b073331`)·생성(`7fd88fa`)·합류(`1bf4efc`)
+- 리뷰 과정에서 `npx expo install`이 만든 `app.json` 변경이 스테이징에서 빠진 건, Expo Router 라우트 타입이 갱신되지 않은 건(WSL2 `/mnt/d` 파일 감시 문제로 추정)을 잡음. **리뷰어 리포트의 `tsc` 결과 서술이 부정확했던 건은 직접 타입체크를 돌려 확인** — 서브에이전트 리포트를 그대로 믿지 않는 원칙이 실제로 값을 함
 
 📎 상세: [Notion — 3주차 4일차](https://cookie-moonstone-7ce.notion.site/3-4-2026-07-30-3ada44f2e1e38193bd56dfb38d2d9594?source=copy_link)
 
+### 5일차 · 2026-07-31
+
+- **SDD Task 9**(그룹 멤버 화면 + 초대 코드 발급 인라인, `9c95481`)로 앱 화면 코드 태스크 1~9 완주 — 로그인부터 멤버·초대 코드까지 연결
+- Task 10(수동 E2E)에서 실기기 확인을 수행 — 화면 코드는 계획대로 됐는데 **실행을 위한 마찰**이 계속 나왔다: Expo Go가 지원하는 SDK에 맞추느라 SDK 57 → 54 전면 다운그레이드, 안전 영역이 안 잡혀 `SafeAreaProvider` 추가, 여기에 전날의 WSL2 파일 감시 문제까지
+- 그래서 **클라이언트 플랫폼 결정(ADR 0001) 자체를 재검토**했다. ADR 0001은 네이티브의 단점을 지울 때 "가족 전원이 Android"라는 전제를 썼으면서, 웹의 단점(푸시)을 판단할 땐 그 전제를 적용하지 않았다 — **전제의 비대칭 적용**. 같은 전제를 웹에 적용하면 Android Chrome의 Web Push는 네이티브 FCM과 실질적으로 같다. "상황이 바뀌었다"가 아니라 **"원래 논증의 어디가 틀렸는지"**로 적었다
+- `superpowers:brainstorming`으로 전환 설계 spec 작성·커밋(`bcf03e9`) — Vite + React + Tailwind, Web Push(VAPID), 기존 ADR은 지우지 않고 supersede, `app/` 삭제 후 `web/` 신규
+- 처음에 "CORS 설정이 없으니 서버 변경이 필요하다"고 말했다가 **정정**했다. 개발은 Vite dev 프록시, 운영은 nginx 동일 오리진 서빙이면 양쪽 다 same-origin이라 **`server/` 변경은 0건**이다
+- `superpowers:writing-plans`로 구현 계획 11개 태스크 작성·커밋(`7f72118`). 계획 자체 리뷰에서 **통과해도 의미 없는 테스트**를 발견 — 모듈 전역 토큰을 `afterEach`에서 초기화하지 않아 세션 복원 로직이 깨져도 이전 테스트에서 새어 나온 토큰으로 통과할 수 있었다
+- 감수한 것은 숨기지 않고 명시: 토큰 저장이 OS 키체인 → `localStorage`로 후퇴해 XSS에 노출된다. spec에 **"배포 전 재검토 필수"**로 못 박아 둠
+
+📎 상세: [Notion — 3주차 5일차](https://cookie-moonstone-7ce.notion.site/3-5-2026-07-31-3aea44f2e1e381d79f07c1a8ff825571?source=copy_link)
+
 ## 다음 할 것
 
-- SDD Task 2 리뷰 → 커밋 승인 → Task 3부터 계획 문서 순서대로 Task 10까지 진행(Task 5부터 실기기/에뮬레이터 확인 필요)
-- PIN 설정·검증, vault 토큰, 접근 감사 로그 — 앱 화면 조각 이후 순서 재확인
+- 웹 전환 구현 계획(11개 태스크) SDD 실행 — 착수 전. 브랜치 격리 여부, 브라우저 확인 방법(서브에이전트는 브라우저를 못 띄운다), 화면 렌더 테스트 방침 3가지를 먼저 정해야 함
+- 병합 완료된 `feat/emergency-vault-*` 브랜치 2개 정리
+- PIN 설정·검증, vault 토큰, 접근 감사 로그 — 클라이언트 전환 이후 순서 재확인
